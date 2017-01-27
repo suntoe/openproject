@@ -76,7 +76,9 @@ class CustomFieldFormBuilder < TabularFormBuilder
     select_options = { no_label: true }
     is_required = object.custom_field.is_required?
     default_value = object.custom_field.default_value
-    possible_options = object.custom_field.possible_values_options(object.customized)
+    possible_options = object.custom_field
+      .possible_values_options(object.customized)
+      .map { |option| [option.value, option.id] }
 
     if is_required && default_value.blank?
       select_options[:prompt] = "--- #{l(:actionview_instancetag_blank_option)} ---"

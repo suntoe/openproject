@@ -78,22 +78,67 @@ module Redmine
 
         # Sets the values of the object's custom fields
         # values is a hash like {'1' => 'foo', 2 => 'bar'}
+        #
+        # Also supports multiple values for a custom field where
+        # instead of a single value you'd pass an array.
         def custom_field_values=(values)
+          return nil unless values.is_a?(Hash) && values.any?
+
           @custom_field_values_changed = true
-          values = values.stringify_keys
-          custom_field_values.each do |custom_value|
-            if values.has_key?(custom_value.custom_field_id.to_s)
-              custom_value.value = values[custom_value.custom_field_id.to_s]
+
+          values.with_indifferent_access.each do |custom_field_id, val|
+            existing_custom_values = custom_values_for_custom_field id: custom_field_id
+            new_values = Array(val)
+
+            unless existing_custom_values.empty?
+              assign_new_values! custom_field_id, existing_custom_values, new_values
+              delete_obsolete_custom_values! existing_custom_values, new_values
             end
-          end if values.is_a?(Hash)
+          end
+        end
+
+        def assign_new_values!(custom_field_id, existing_custom_values, new_values)
+          new_values.flatten.zip(existing_custom_values).each do |new_value, custom_value|
+            if custom_value.nil?
+              new_custom_value = custom_values
+                .build(customized: self, custom_field_id: custom_field_id, value: new_value)
+
+              custom_field_values.push(new_custom_value)
+            else
+              custom_value.value = new_value
+            end
+          end
+        end
+
+        def delete_obsolete_custom_values!(existing_custom_values, new_values)
+          existing_custom_values.zip(new_values).each_with_index do |(custom_value, new_value), i|
+            if new_value.nil?
+              if i == 0
+                # leave the first value but set it to nil as that's the behaviour expected
+                # by the original acts_as_customizable
+                custom_value.value = nil
+              else
+                custom_value.destroy
+                custom_field_values.delete custom_value
+                custom_values.delete custom_value
+              end
+            end
+          end
+        end
+
+        def custom_values_for_custom_field(id:)
+          custom_field_values.select { |cv| cv.custom_field_id == id.to_i }
         end
 
         def custom_field_values
-          @custom_field_values ||= available_custom_fields.map { |custom_field|
-            existing_cv = custom_values.detect { |v| v.custom_field == custom_field }
-            existing_cv || custom_values.build(customized: self,
-                                               custom_field: custom_field,
-                                               value: nil)
+          @custom_field_values ||= available_custom_fields.flat_map { |custom_field|
+            existing_cvs = custom_values.select { |v| v.custom_field_id == custom_field.id }
+
+            if existing_cvs.empty?
+              existing_cvs.push custom_values.build(customized: self, custom_field: custom_field, value: nil)
+            end
+
+            existing_cvs
           }
         end
 
@@ -107,7 +152,13 @@ module Redmine
 
         def custom_value_for(c)
           field_id = (c.is_a?(CustomField) ? c.id : c.to_i)
-          custom_values.detect { |v| v.custom_field_id == field_id }
+          values = custom_values.select { |v| v.custom_field_id == field_id }
+
+          if values.size > 1
+            values.sort_by(&:id)
+          else
+            values.first
+          end
         end
 
         def save_custom_field_values
@@ -123,7 +174,21 @@ module Redmine
           custom_values.each { |cv| cv.destroy unless custom_field_values.include?(cv) }
         end
 
+        def set_default_values!
+          new_values = {}
+
+          available_custom_fields.each do |custom_field|
+            if custom_values.none? {|cv| cv.custom_field_id == custom_field.id }
+              new_values[custom_field.id] = custom_field.default_value
+            end
+          end
+
+          self.custom_field_values = new_values
+        end
+
         def validate_custom_values
+          set_default_values! if new_record?
+
           custom_field_values.reject(&:marked_for_destruction?).select(&:invalid?).each do |cv|
             cv.errors.each do |attribute, _|
               # Relies on patch to AR::Errors in 10-patches.rb.
@@ -190,8 +255,15 @@ module Redmine
 
         def define_custom_field_getter(getter_name, custom_field)
           define_singleton_method getter_name do
-            custom_value = custom_value_for(custom_field)
-            custom_value ? custom_value.typed_value : nil
+            custom_values = Array(custom_value_for(custom_field)).map do |custom_value|
+              custom_value ? custom_value.typed_value : nil
+            end
+
+            if custom_field.multi_value?
+              custom_values
+            else
+              custom_values.first
+            end
           end
         end
 
@@ -200,7 +272,7 @@ module Redmine
             # N.B. we do no strict type checking here, it would be possible to assign a user
             # to an integer custom field...
             value = value.id if value.respond_to?(:id)
-            self.custom_field_values = { custom_field.id => value }
+            self.custom_field_values = { custom_field.id => Array(value) }
           end
         end
 

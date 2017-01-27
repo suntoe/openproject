@@ -1,0 +1,7 @@
+<div ng-repeat="value in $ctrl.field.value" title="{{ value }}" class="custom-option">
+  {{ value }}
+</div>
+
+<div title="no value" ng-if="$ctrl.field.value.length == 0" class="custom-option -empty">
+  -
+</divn>

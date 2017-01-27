@@ -33,12 +33,6 @@ custom_values_006:
   customized_id: 3
   id: 6
   value: "125"
-custom_values_007:
-  customized_type: Project
-  custom_field_id: 3
-  customized_id: 1
-  id: 7
-  value: Stable
 custom_values_001:
   customized_type: Principal
   custom_field_id: 4
@@ -69,12 +63,6 @@ custom_values_005:
   customized_id: 2
   id: 5
   value: ""
-custom_values_008:
-  customized_type: WorkPackage
-  custom_field_id: 1
-  customized_id: 3
-  id: 8
-  value: "MySQL"
 custom_values_009:
   customized_type: WorkPackage
   custom_field_id: 2
@@ -129,12 +117,6 @@ custom_values_017:
   customized_id: 1
   id: 17
   value: '2009-12-01'
-custom_values_018:
-  customized_type: WorkPackage
-  custom_field_id: 1
-  customized_id: 1
-  id: 18
-  value: "Oracle"
 custom_values_019:
   customized_type: WorkPackage
   custom_field_id: 8

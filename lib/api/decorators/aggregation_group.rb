@@ -30,19 +30,38 @@
 module API
   module Decorators
     class AggregationGroup < Single
-      def initialize(group_key, count, sums: nil)
+      def initialize(group_key, count, query:, sums: nil)
         @count = count
         @sums = sums
+        @query = query
+
+        if query.group_by_column.is_a?(QueryCustomFieldColumn) && query.group_by_column.custom_field.multi_value?
+          options = query.group_by_column.custom_field.custom_options.where(id: group_key.to_s.split("."))
+
+          if options
+            group_key = options.map(&:value).join(", ")
+            @links = options.map do |opt|
+              {
+                href: ::API::V3::Utilities::ResourceLinkGenerator.make_link(opt.id.to_s),
+                title: opt.value
+              }
+            end
+          end
+        end
 
         @link = ::API::V3::Utilities::ResourceLinkGenerator.make_link(group_key)
 
         super(group_key, current_user: nil)
       end
 
-      link :valueLink do
-        {
-          href: @link
-        } if @link
+      links :valueLink do
+        if @links
+          @links
+        elsif @link
+          [{ href: @link }]
+        else
+          []
+        end
       end
 
       property :value,

@@ -34,7 +34,7 @@ module API
       # http://tools.ietf.org/html/rfc3986#section-3.3
       SEGMENT_CHARACTER = '(\w|[-~!$&\'\(\)*+\.,:;=@]|%[0-9A-Fa-f]{2})'
       RESOURCE_REGEX = "/api/v(?<version>\\d)/(?<namespace>\\w+)/(?<id>#{SEGMENT_CHARACTER}+)\\z"
-      SO_REGEX = "/api/v(?<version>\\d)/string_objects/?\\?value=(?<id>#{SEGMENT_CHARACTER}*)\\z"
+      SO_REGEX = "/api/v(?<version>\\d)/string_objects/?\\?value=(?<id>\\w*).*\\z"
 
       class << self
         def parse(resource_link)

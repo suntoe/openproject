@@ -196,7 +196,7 @@ module Api
       end
 
       Struct.new('WorkPackage', *[WorkPackage.column_names.map(&:to_sym), :custom_values, :child_ids].flatten)
-      Struct.new('CustomValue', *CustomValue.column_names.map(&:to_sym))
+      Struct.new('CustomValue', :typed_value, *CustomValue.column_names.map(&:to_sym))
 
       def convert_wp_to_struct(work_package)
         struct = Struct::WorkPackage.new
@@ -215,13 +215,25 @@ module Api
           struct.send(:"#{attribute}=", value)
         end
 
+        if model.is_a? CustomValue
+          struct.value = value_for_frontend model
+        end
+
         struct
+      end
+
+      def value_for_frontend(custom_value)
+        if custom_value.custom_field.field_format == "list"
+          custom_value.typed_value
+        else
+          custom_value.value
+        end
       end
 
       def convert_wp_object_to_struct(model)
         result = convert_wp_to_struct(model)
-        result.custom_values = model.custom_values.select { |cv| cv.value != '' }.map do |model|
-          convert_custom_value_to_struct(model)
+        result.custom_values = model.custom_values.select { |cv| cv.value != '' }.map do |custom_value|
+          convert_custom_value_to_struct(custom_value)
         end
         result
       end

@@ -183,8 +183,12 @@ describe CustomFieldFormBuilder do
 
     context 'for a list custom field' do
       before do
-        resource.custom_field.field_format = 'list'
-        resource.custom_field.possible_values = 'my_option'
+        custom_field = resource.custom_field
+
+        custom_field.field_format = 'list'
+        custom_field.save!
+
+        custom_field.custom_options.create! value: 'my_option', position: 1
       end
 
       it_behaves_like 'wrapped in container', 'select-container'
@@ -197,7 +201,7 @@ describe CustomFieldFormBuilder do
                   name="user[#{resource.custom_field_id}]"
                   no_label="true"><option
                   value=\"\"></option>
-                  <option value=\"my_option\">my_option</option></select>
+                  <option value=\"#{resource.custom_field.custom_options.first.id}\">my_option</option></select>
         }).at_path('select')
       end
 
@@ -214,7 +218,7 @@ describe CustomFieldFormBuilder do
                     name="user[#{resource.custom_field_id}]"
                     no_label="true"><option value=\"\">---
                     Please select ---</option>
-                    <option value=\"my_option\">my_option</option></select>
+                    <option value=\"#{resource.custom_field.custom_options.first.id}\">my_option</option></select>
           }).at_path('select')
         end
       end
@@ -232,7 +236,7 @@ describe CustomFieldFormBuilder do
                     lang=\"en\"
                     name="user[#{resource.custom_field_id}]"
                     no_label="true"><option
-                    value=\"my_option\">my_option</option></select>
+                    value=\"#{resource.custom_field.custom_options.first.id}\">my_option</option></select>
           }).at_path('select')
         end
       end

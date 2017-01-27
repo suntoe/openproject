@@ -77,16 +77,6 @@ describe CustomValue, type: :model do
     assert v.valid?
   end
 
-  it 'should list field validation' do
-    f = CustomField.new(field_format: 'list', possible_values: ['value1', 'value2'])
-    v = CustomValue.new(custom_field: f, value: '')
-    assert v.valid?
-    v.value = 'abc'
-    assert !v.valid?
-    v.value = 'value2'
-    assert v.valid?
-  end
-
   it 'should int field validation' do
     f = CustomField.new(field_format: 'int')
     v = CustomValue.new(custom_field: f, value: '')

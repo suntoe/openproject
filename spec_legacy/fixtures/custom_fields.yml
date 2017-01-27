@@ -27,17 +27,6 @@
 #++
 
 ---
-custom_fields_001:
-  min_length: 0
-  regexp: ""
-  is_for_all: true
-  is_filter: true
-  type: WorkPackageCustomField
-  max_length: 0
-  id: 1
-  is_required: false
-  field_format: list
-  editable: true
 custom_fields_002:
   min_length: 1
   regexp: ""
@@ -47,18 +36,8 @@ custom_fields_002:
   id: 2
   is_required: false
   field_format: string
+  default_value: "Default string"
   searchable: true
-  editable: true
-custom_fields_003:
-  min_length: 0
-  regexp: ""
-  is_for_all: false
-  is_filter: true
-  type: ProjectCustomField
-  max_length: 0
-  id: 3
-  is_required: false
-  field_format: list
   editable: true
 custom_fields_004:
   min_length: 0

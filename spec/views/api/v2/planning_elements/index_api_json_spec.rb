@@ -106,7 +106,7 @@ describe 'api/v2/planning_elements/index.api.rabl', type: :view do
       project.save!
 
       wp1.save!
-      wp1.custom_values[0].value = 'MySQL'
+      wp1.custom_values[0].value = custom_field.custom_options.first.id # 'MySQL'
       wp1.save!
 
       assign(:planning_elements, planning_elements)

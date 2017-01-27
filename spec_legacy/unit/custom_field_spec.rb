@@ -34,24 +34,6 @@ describe CustomField, type: :model do
     assert field.save
   end
 
-  it 'should possible values should accept an array' do
-    field = CustomField.new
-    field.possible_values = ['One value', '']
-    assert_equal ['One value'], field.possible_values
-  end
-
-  it 'should possible values should accept a string' do
-    field = CustomField.new
-    field.possible_values = 'One value'
-    assert_equal ['One value'], field.possible_values
-  end
-
-  it 'should possible values should accept a multiline string' do
-    field = CustomField.new
-    field.possible_values = "One value\nAnd another one  \r\n \n"
-    assert_equal ['One value', 'And another one'], field.possible_values
-  end
-
   it 'should destroy' do
     field = FactoryGirl.create :custom_field
     assert field.destroy

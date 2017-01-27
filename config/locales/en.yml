@@ -283,6 +283,7 @@ en:
         is_required: "Required"
         max_length: "Maximum length"
         min_length: "Minimum length"
+        multi_value: "Allow multi-select"
         possible_values: "Possible values"
         regexp: "Regular expression"
         searchable: "Searchable"
