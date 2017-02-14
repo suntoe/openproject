@@ -47,10 +47,10 @@
         spanDefaultBool       = $('#default_value_bool');
 
     var deactivate = function(element) {
-      element.hide().find('input, textarea').not('.destroy_flag').attr('disabled', true);
+      element.hide().find('input, textarea').not('.destroy_flag,.-starts-disabled').attr('disabled', true);
     },
     activate = function(element) {
-      element.show().find('input, textarea').not('.destroy_flag').removeAttr('disabled');
+      element.show().find('input, textarea').not('.destroy_flag,.-starts-disabled').removeAttr('disabled');
     },
     toggleVisibility = function(method, args) {
       var fields = Array.prototype.slice.call(args);

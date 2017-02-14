@@ -64,7 +64,8 @@ See doc/COPYRIGHT.rdoc for more details.
   </div>
 
   <div class="form--field" id="custom_field_multi_select">
-    <%= f.check_box :multi_value %>
+    <% allowed = EnterpriseToken.allows_to?(:multiselect_custom_fields) %>
+    <%= f.check_box :multi_value, disabled: true, class: '-starts-disabled' %>
   </div>
 
   <div class="form--field" id="custom_field_possible_values_attributes">
