@@ -33,6 +33,12 @@
 # are allowed which may be further restriced by other means other
 # specific values.
 class AddCustomOptions < ActiveRecord::Migration[5.0]
+  class OldTranslationModel < ActiveRecord::Base
+    self.table_name = :custom_field_translations
+
+    serialize :possible_values, Array
+  end
+
   def table_name
     :custom_options
   end
@@ -69,7 +75,7 @@ class AddCustomOptions < ActiveRecord::Migration[5.0]
   def initialize_custom_options!
     list_custom_fields.each do |custom_field|
       translations = custom_field_translations[custom_field.id] =
-        CustomField::Translation
+        OldTranslationModel
           .where(custom_field_id: custom_field.id)
           .order(id: :asc)
 
