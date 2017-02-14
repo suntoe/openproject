@@ -125,6 +125,11 @@ class CustomFieldsController < ApplicationController
 
   def blank_translation_attributes_as_nil
     @custom_field_params = permitted_params.custom_field
+
+    if !EnterpriseToken.allows_to?(:multiselect_custom_fields)
+      @custom_field_params.delete :multi_value
+    end
+
     return unless @custom_field_params['translations_attributes']
 
     @custom_field_params['translations_attributes'].each do |_index, attributes|
