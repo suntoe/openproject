@@ -232,9 +232,10 @@ module Api
 
       def convert_wp_object_to_struct(model)
         result = convert_wp_to_struct(model)
-        result.custom_values = model.custom_values.select { |cv| cv.value != '' }.map do |custom_value|
-          convert_custom_value_to_struct(custom_value)
-        end
+        result.custom_values = model
+          .custom_values.select { |cv| cv.value != '' }
+          .map { |custom_value| convert_custom_value_to_struct(custom_value) }
+
         result
       end
 

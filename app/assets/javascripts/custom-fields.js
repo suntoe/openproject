@@ -164,7 +164,7 @@
 
   var removeOption = function() {
     var self = $(this);
-    if (self.attr("href") == "#" || self.attr("href").endsWith("/0")) {
+    if (self.attr("href") === "#" || self.attr("href").endsWith("/0")) {
       var row = self.closest("tr");
 
       if (row.siblings().length > 1) {

@@ -262,7 +262,8 @@ describe ::API::V3::WorkPackages::Schema::SpecificWorkPackageSchema do
     let(:version_cf) { FactoryGirl.build_stubbed(:version_wp_custom_field) }
 
     it "is a list custom fields' possible values" do
-      expect(subject.assignable_custom_field_values(list_cf)).to eql list_cf.possible_values.map { |co| [co.value, co.id] }
+      expect(subject.assignable_custom_field_values(list_cf))
+        .to eql list_cf.possible_values.map { |co| [co.value, co.id] }
     end
 
     it "is a version custom fields' project values" do

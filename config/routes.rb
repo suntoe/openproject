@@ -165,7 +165,10 @@ OpenProject::Application.routes.draw do
 
   resources :custom_fields, except: :show do
     member do
-      match "options/:option_id", to: "custom_fields#delete_option", via: :delete, as: :delete_option_of
+      match "options/:option_id",
+            to: "custom_fields#delete_option",
+            via: :delete,
+            as: :delete_option_of
     end
   end
   get '(projects/:project_id)/search' => 'search#index', as: 'search'

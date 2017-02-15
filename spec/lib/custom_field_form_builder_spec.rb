@@ -194,6 +194,8 @@ describe CustomFieldFormBuilder do
       it_behaves_like 'wrapped in container', 'select-container'
 
       it 'should output element' do
+        value = resource.custom_field.custom_options.first.id
+
         expect(output).to be_html_eql(%{
           <select class="custom-class form--select"
                   id="user#{resource.custom_field_id}"
@@ -201,7 +203,7 @@ describe CustomFieldFormBuilder do
                   name="user[#{resource.custom_field_id}]"
                   no_label="true"><option
                   value=\"\"></option>
-                  <option value=\"#{resource.custom_field.custom_options.first.id}\">my_option</option></select>
+                  <option value=\"#{value}\">my_option</option></select>
         }).at_path('select')
       end
 
@@ -211,6 +213,8 @@ describe CustomFieldFormBuilder do
         end
 
         it 'should output element' do
+          value = resource.custom_field.custom_options.first.id
+
           expect(output).to be_html_eql(%{
             <select class="custom-class form--select"
                     id="user#{resource.custom_field_id}"
@@ -218,7 +222,7 @@ describe CustomFieldFormBuilder do
                     name="user[#{resource.custom_field_id}]"
                     no_label="true"><option value=\"\">---
                     Please select ---</option>
-                    <option value=\"#{resource.custom_field.custom_options.first.id}\">my_option</option></select>
+                    <option value=\"#{value}\">my_option</option></select>
           }).at_path('select')
         end
       end
@@ -230,13 +234,15 @@ describe CustomFieldFormBuilder do
         end
 
         it 'should output element' do
+          value = resource.custom_field.custom_options.first.id
+
           expect(output).to be_html_eql(%{
             <select class="custom-class form--select"
                     id="user#{resource.custom_field_id}"
                     lang=\"en\"
                     name="user[#{resource.custom_field_id}]"
                     no_label="true"><option
-                    value=\"#{resource.custom_field.custom_options.first.id}\">my_option</option></select>
+                    value=\"#{value}\">my_option</option></select>
           }).at_path('select')
         end
       end

@@ -30,7 +30,9 @@ require 'spec_helper'
 
 describe CustomValue::ListStrategy do
   let(:custom_field) { FactoryGirl.create :list_wp_custom_field, possible_values: ["foo", "bar"] }
-  let(:custom_value) { double("CustomField", value: value, custom_field: custom_field, customized: customized) }
+  let(:custom_value) do
+    double("CustomField", value: value, custom_field: custom_field, customized: customized)
+  end
 
   let(:customized) { double('customized') }
 

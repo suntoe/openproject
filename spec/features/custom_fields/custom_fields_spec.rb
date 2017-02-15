@@ -63,10 +63,16 @@ describe 'custom fields', js: true do
 
   context "with an existing list custom field" do
     let!(:custom_field) do
-      FactoryGirl.create :list_wp_custom_field, name: "Platform", possible_values: ["Playstation", "Xbox", "Nintendo", "PC"]
+      FactoryGirl.create(
+        :list_wp_custom_field,
+        name: "Platform",
+        possible_values: ["Playstation", "Xbox", "Nintendo", "PC"]
+      )
     end
 
     before do
+      allow(EnterpriseToken).to receive(:allows_to?).and_return(true)
+
       cf_page.visit!
 
       click_on custom_field.name
@@ -119,7 +125,12 @@ describe 'custom fields', js: true do
 
     context "with work packages using the options" do
       before do
-        FactoryGirl.create_list :work_package_custom_value, 3, custom_field: custom_field, value: custom_field.custom_options[1].id
+        FactoryGirl.create_list(
+          :work_package_custom_value,
+          3,
+          custom_field: custom_field,
+          value: custom_field.custom_options[1].id
+        )
       end
 
       it "deletes a custom option and all values using it" do

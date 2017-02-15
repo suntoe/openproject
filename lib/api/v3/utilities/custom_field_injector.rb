@@ -270,36 +270,7 @@ module API
         end
 
         def link_value_getter_for(custom_field, path_method)
-          -> (*) do
-            # we can't use the generated accessor (e.g. represented.send :custom_field_1) here,
-            # because we need to generate a link even if the id does not belong to an existing
-            # object (that behaviour is only required for form payloads)
-            values = Array(represented.custom_value_for(custom_field)).map do |custom_value|
-              if custom_value && custom_value.value.present?
-                title = custom_value.typed_value.respond_to?(:name) ?
-                  custom_value.typed_value.name : custom_value.typed_value
-                params =
-                  if custom_field.list?
-                    [title, custom_value.value] # list custom_fields values use string objects which support and need titles
-                  else
-                    custom_value.value
-                  end
-
-                {
-                  title: title,
-                  href: api_v3_paths.send(path_method, params),
-                }
-              else
-                { href: nil, title: nil }
-              end
-            end
-
-            if custom_field.multi_value?
-              values
-            else
-              values.first
-            end
-          end
+          LinkValueGetter.new custom_field, path_method
         end
 
         def link_value_setter_for(custom_field, property, expected_namespace)
@@ -311,9 +282,8 @@ module API
                   href,
                   property: property,
                   expected_version: '3',
-                  expected_namespace: expected_namespace)
-              else
-                nil
+                  expected_namespace: expected_namespace
+                )
               end
 
               [value].compact

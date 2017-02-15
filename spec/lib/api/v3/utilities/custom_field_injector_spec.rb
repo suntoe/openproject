@@ -178,7 +178,11 @@ describe ::API::V3::Utilities::CustomFieldInjector do
 
       it_behaves_like 'links to and embeds allowed values directly' do
         let(:path) { cf_path }
-        let(:hrefs) { custom_field.possible_values.map { |value| api_v3_paths.string_object([value.value, value.id]) } }
+        let(:hrefs) do
+          custom_field.possible_values.map do |value|
+            api_v3_paths.string_object([value.value, value.id])
+          end
+        end
       end
     end
 
@@ -301,11 +305,6 @@ describe ::API::V3::Utilities::CustomFieldInjector do
         let(:link) { cf_path }
         let(:href) { "/api/v3/string_objects?value=#{raw_value}&title=#{value}" }
         let(:title) { value }
-      end
-
-      it 'has the string object embedded' do
-        is_expected.to be_json_eql('StringObject'.to_json).at_path("_embedded/#{cf_path}/_type")
-        is_expected.to be_json_eql(value.to_json).at_path("_embedded/#{cf_path}/value")
       end
 
       context 'value is nil' do

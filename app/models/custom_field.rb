@@ -87,7 +87,7 @@ class CustomField < ActiveRecord::Base
 
   def default_value
     if list?
-      ids = custom_options.select { |co| co.default_value }.map(&:id)
+      ids = custom_options.select(&:default_value).map(&:id)
 
       if multi_value?
         ids
@@ -165,12 +165,7 @@ class CustomField < ActiveRecord::Base
 
   # Makes possible_values accept a multiline string
   def possible_values=(arg)
-    values =
-      if arg.is_a?(Array)
-        arg.compact.map(&:strip).select { |v| !v.blank? }
-      else
-        arg.to_s.split(/[\n\r]+/)
-      end
+    values = possible_values_from_arg arg
 
     max_position = custom_options.size
     values.zip(custom_options).each_with_index do |(value, custom_option), i|
@@ -248,6 +243,14 @@ class CustomField < ActiveRecord::Base
   end
 
   private
+
+  def possible_values_from_arg(arg)
+    if arg.is_a?(Array)
+      arg.compact.map(&:strip).select { |v| !v.blank? }
+    else
+      arg.to_s.split(/[\n\r]+/)
+    end
+  end
 
   def attribute_locale(attribute, value)
     locales_for_value = translations.select { |t| t.send(attribute) == value }
