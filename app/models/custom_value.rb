@@ -54,6 +54,21 @@ class CustomValue < ActiveRecord::Base
     strategy.typed_value
   end
 
+  ##
+  # Returns the value of this custom field as needed by the APIv2.
+  # For instance it expects the raw value for user custom fields to
+  # use it (the ID) to lookup the user.
+  #
+  # On the other hand for list custom fields it can't do the lookup
+  # (there is no custom options API) and besides it shouldn't.
+  def api_v2_value
+    if custom_field.list?
+      typed_value
+    else
+      value
+    end
+  end
+
   def editable?
     custom_field.editable?
   end
