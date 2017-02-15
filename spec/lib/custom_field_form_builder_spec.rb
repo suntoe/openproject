@@ -230,7 +230,7 @@ describe CustomFieldFormBuilder do
       context 'which is required and a default value' do
         before do
           resource.custom_field.is_required = true
-          resource.custom_field.default_value = 'my_option'
+          resource.custom_field.custom_options.first.update default_value: true
         end
 
         it 'should output element' do
